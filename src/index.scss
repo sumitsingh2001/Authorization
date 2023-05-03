@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@mixin bg($bg: #ccc) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg;
+  height: 60px;
+  margin-bottom: 16px;
+}

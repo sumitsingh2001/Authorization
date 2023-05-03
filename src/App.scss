@@ -1,0 +1,69 @@
+.App {
+  text-align: center;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  height: 60px;
+  margin-bottom: 16px;
+
+}
+
+.header {
+  height: 15rem;
+}
+
+.logo {
+  text-align: left;
+  height: 100px;
+  background-color: #ccc;
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.main {
+  display: flex;
+
+}
+
+.sidebar {
+  height: 70vh;
+  width: 30vw;
+  margin-right: 16px;
+}
+
+
+
+/* sec-2 */
+
+.header-part {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 60px;
+  height: 60px;
+  background-color: #ccc;
+  margin-bottom: 16px;
+}
+
+.header-part .logo {
+  max-height: 100%;
+}
+
+.info {
+  height: 120px;
+}
+
+.box_cont {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  height: 60vh;
+}

@@ -1,0 +1,10 @@
+@import '../../index.scss';
+
+.center {
+  @include bg;
+}
+
+.box {
+  width: 100%;
+  height: 100%;
+}
