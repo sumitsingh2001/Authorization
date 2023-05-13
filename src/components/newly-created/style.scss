@@ -1,0 +1,51 @@
+h6 {
+  width: 100%;
+  font-size: 16px;
+  text-align: center;
+  color: #fff;
+  font-variant: small-caps;
+  text-transform: uppercase;
+}
+.listss {
+  flex-direction: column;
+
+  .lit {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+
+    .data {
+      font-size: 14px;
+      text-align: left;
+      color: #ed1212;
+      font-variant: small-caps;
+      text-transform: capitalize;
+      min-width: fit-content;
+
+      & > div {
+        margin-bottom: 4px;
+      }
+    }
+
+    .align {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      width: 100px;
+      border: 1px solid #fff;
+      height: 100px;
+
+      .icon {
+        font-size: 24px;
+        height: fit-content;
+      }
+      img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ import {
 const Home = () => {
   return (
     <div className='home'>
-      <Logo />
+      {/* <Logo /> */}
       <Navigation />
       <Header />
       <div className='main'>
