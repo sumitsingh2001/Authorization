@@ -105,3 +105,30 @@
     }
   }
 }
+.edit-form {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.edit-form h3 {
+  margin: 0 0 10px 0;
+}
+
+.edit-form form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.edit-form form > div {
+  margin-bottom: 10px;
+}
+
+.edit-form form label {
+  margin-right: 10px;
+}
+
+.edit-form form input {
+  width: 100;
+}

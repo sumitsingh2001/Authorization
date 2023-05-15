@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
@@ -65,29 +65,6 @@ const Login = () => {
     } catch (error) {
       console.log('Invalid credentials');
     }
-
-    // !
-
-    // try {
-    //   const response = await axios.post(
-    //     'http://assignment.cyberboxer.com/auth/login',
-    //     { email: email, password: password },
-    //     {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data',
-    //         'Access-Control-Allow-Origin': '*',
-    //       },
-    //     }
-    //   );
-    //   if (response.data.success) {
-    //     const token = response.data.token;
-    //     console.log('Token:', token);
-    //   } else {
-    //     console.log('Invalid credentials');
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   return (

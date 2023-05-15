@@ -6,6 +6,7 @@ import { AuthContext } from '../../context/AuthContext';
 const Dashboard = () => {
   const { token, setToken } = React.useContext(AuthContext);
   const [books, setBooks] = useState<any>([]);
+  const [editingBook, setEditingBook] = useState<any>(null);
 
   // AFTER ONE TIME RELOADING THE DATA, BOOKS WERE NOT ACCESSING THE TOKEN.
   useEffect(() => {
@@ -66,6 +67,45 @@ const Dashboard = () => {
     }
   };
 
+  //
+  const handleUpdate = async (book: any) => {
+    try {
+      const response = await axios.post(
+        `http://assignment.cyberboxer.com/books/update/${book.id}`,
+        {
+          name: book.name,
+          author: book.author,
+          image: book.image,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data.message);
+
+      // Update the book data in the state
+      const updatedBooks = books.map((b: any) => {
+        if (b.id === book.id) {
+          return {
+            ...b,
+            name: book.name,
+            author: book.author,
+            image: book.image,
+          };
+        }
+        return b;
+      });
+      setBooks(updatedBooks);
+
+      // Clear the editing book state
+      setEditingBook(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // LOADING THE CONTENT
   if (!books) {
     return <p>Trying to fetch the data...</p>;
@@ -89,7 +129,9 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className='crud_btn'>
-                  <div className='edit'>Edit</div>
+                  <div className='edit' onClick={() => setEditingBook(el)}>
+                    Edit
+                  </div>
                   <div className='delete' onClick={() => handleDelete(el.id)}>
                     Delete
                   </div>
@@ -97,6 +139,50 @@ const Dashboard = () => {
               </div>
             );
           })}
+        {editingBook && (
+          <div className='edit-form'>
+            <h3>Edit Book</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdate(editingBook);
+              }}
+            >
+              <div>
+                <label>Name</label>
+                <input
+                  type='text'
+                  value={editingBook.name}
+                  onChange={(e) =>
+                    setEditingBook({ ...editingBook, name: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Author</label>
+                <input
+                  type='text'
+                  value={editingBook.author}
+                  onChange={(e) =>
+                    setEditingBook({ ...editingBook, author: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Image</label>
+                <input
+                  type='text'
+                  value={editingBook.image}
+                  onChange={(e) =>
+                    setEditingBook({ ...editingBook, image: e.target.value })
+                  }
+                />
+              </div>
+              <button type='submit'>Save</button>
+              <button onClick={() => setEditingBook(null)}>Cancel</button>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );
