@@ -7,6 +7,9 @@ import './style.scss';
 const saveData = async (data: any) => {
   try {
     await axios.post('http://assignment.cyberboxer.com/books/save', data);
+    // const updatedBooks = JSON.parse(localStorage.getItem('books') || '[]');
+    // updatedBooks.push(data);
+    // localStorage.setItem('books', JSON.stringify(updatedBooks));
   } catch (error) {
     console.log(error);
   }
@@ -44,6 +47,7 @@ const Form = () => {
       console.log(response.data.data);
       saveData(response.data.data);
       setBookId(response.data.data.id);
+      // setBooks((updatedBooks: any) => [...updatedBooks, response.data.data]);
     } catch (error) {
       console.log(error);
     }

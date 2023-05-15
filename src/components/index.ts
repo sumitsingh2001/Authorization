@@ -9,4 +9,4 @@ export { default as Box } from './box/Box';
 export { default as Login } from './login/Login';
 export { default as Private } from './private/Private';
 export { default as Form } from './form/Form';
-export { default as NewBook } from './newly-created/NewBook';
+export { default as Modal } from './modal/Modal';

@@ -2,11 +2,22 @@ import React, { useEffect, useState } from 'react';
 import '../../App.scss';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
+import { Modal } from '../../components';
 
 const Dashboard = () => {
   const { token, setToken } = React.useContext(AuthContext);
   const [books, setBooks] = useState<any>([]);
-  const [editingBook, setEditingBook] = useState<any>(null);
+  const [editingBook, setEditingBook] = useState<any | File>(null);
+
+  const [showModal, setShowModal] = useState(false);
+
+  function handleShowModal() {
+    setShowModal(true);
+  }
+
+  function handleCloseModal() {
+    setShowModal(false);
+  }
 
   // AFTER ONE TIME RELOADING THE DATA, BOOKS WERE NOT ACCESSING THE TOKEN.
   useEffect(() => {
@@ -28,7 +39,7 @@ const Dashboard = () => {
             },
           }
         );
-        console.log(response.data.data);
+        // console.log(response.data.data);
         setBooks(response.data.data);
       } catch (error) {
         console.log(error);
@@ -37,18 +48,19 @@ const Dashboard = () => {
 
     fetchBooks();
   }, [token]);
-  console.log(books, 'books');
-  console.log(token, 'accessed token');
+  // console.log(books, 'books');
+  // console.log(token, 'accessed token');
 
   //DELETING THE SELECTED ID
   const handleDelete = async (id: number) => {
     console.log('id to delete:', id);
     // console.log('index:', index);
-
+    const deleteData = new FormData();
+    deleteData.append('id', `${id}`);
     try {
       const response = await axios.post(
         `http://assignment.cyberboxer.com/books/delete/${id}`,
-        null,
+        deleteData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,6 +72,7 @@ const Dashboard = () => {
       // GIVEN ID AND BOOK ID IF MATCHED, IT'LL BE SELECTED TO FILTER OUT.//! ie BOOK ID 85 !== 85 IT'S FALSE !!
       const updatedBooks = books.filter((book: any) => book.id !== id);
       setBooks(updatedBooks);
+      console.log(updatedBooks, 'ondelete');
 
       // setBooks(updatedBooks);
     } catch (error) {
@@ -69,14 +82,18 @@ const Dashboard = () => {
 
   //
   const handleUpdate = async (book: any) => {
+    console.log(book.id);
+
+    const formData = new FormData();
+    formData.append('name', book.name);
+    formData.append('author', book.author);
+    formData.append('id', book.id);
+    book.image && formData.append('image', book.image);
+
     try {
       const response = await axios.post(
         `http://assignment.cyberboxer.com/books/update/${book.id}`,
-        {
-          name: book.name,
-          author: book.author,
-          image: book.image,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -84,6 +101,7 @@ const Dashboard = () => {
         }
       );
       console.log(response.data.message);
+      console.log(response.data);
 
       // Update the book data in the state
       const updatedBooks = books.map((b: any) => {
@@ -91,6 +109,7 @@ const Dashboard = () => {
           return {
             ...b,
             name: book.name,
+            id: book.id,
             author: book.author,
             image: book.image,
           };
@@ -98,6 +117,8 @@ const Dashboard = () => {
         return b;
       });
       setBooks(updatedBooks);
+      // updateDataSave(updatedBooks);
+      console.log(updatedBooks, 'onupdate');
 
       // Clear the editing book state
       setEditingBook(null);
@@ -105,6 +126,12 @@ const Dashboard = () => {
       console.log(error);
     }
   };
+
+  if (editingBook && showModal) {
+    document.body.style.overflowY = 'hidden';
+  } else {
+    document.body.style.overflowY = 'scroll';
+  }
 
   // LOADING THE CONTENT
   if (!books) {
@@ -129,7 +156,13 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className='crud_btn'>
-                  <div className='edit' onClick={() => setEditingBook(el)}>
+                  <div
+                    className='edit'
+                    onClick={() => {
+                      setEditingBook(el);
+                      handleShowModal();
+                    }}
+                  >
                     Edit
                   </div>
                   <div className='delete' onClick={() => handleDelete(el.id)}>
@@ -139,49 +172,61 @@ const Dashboard = () => {
               </div>
             );
           })}
-        {editingBook && (
-          <div className='edit-form'>
-            <h3>Edit Book</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdate(editingBook);
-              }}
-            >
-              <div>
-                <label>Name</label>
-                <input
-                  type='text'
-                  value={editingBook.name}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, name: e.target.value })
-                  }
-                />
+        {editingBook && showModal && (
+          <Modal onClose={handleCloseModal}>
+            <div className='getInput'>
+              <div className='edit-form'>
+                <h3>Edit Book</h3>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleUpdate(editingBook);
+                  }}
+                >
+                  <div>
+                    <label>Book Name</label>
+                    <input
+                      type='text'
+                      value={editingBook.name}
+                      onChange={(e) =>
+                        setEditingBook({ ...editingBook, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label>Book Author</label>
+                    <input
+                      type='text'
+                      value={editingBook.author}
+                      onChange={(e) =>
+                        setEditingBook({
+                          ...editingBook,
+                          author: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label>Image</label>
+                    <input
+                      type='text'
+                      value={editingBook.image}
+                      onChange={(e) =>
+                        setEditingBook({
+                          ...editingBook,
+                          image: e.target.files && e.target.files[0],
+                        })
+                      }
+                    />
+                  </div>
+                  <div className='buttons_save'>
+                    <button type='submit'>Save</button>
+                    <button onClick={() => setEditingBook(null)}>Cancel</button>
+                  </div>
+                </form>
               </div>
-              <div>
-                <label>Author</label>
-                <input
-                  type='text'
-                  value={editingBook.author}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, author: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label>Image</label>
-                <input
-                  type='text'
-                  value={editingBook.image}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, image: e.target.value })
-                  }
-                />
-              </div>
-              <button type='submit'>Save</button>
-              <button onClick={() => setEditingBook(null)}>Cancel</button>
-            </form>
-          </div>
+            </div>
+          </Modal>
         )}
       </div>
     </>
