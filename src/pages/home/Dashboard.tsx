@@ -8,6 +8,8 @@ const Dashboard = () => {
   const { token, setToken } = React.useContext(AuthContext);
   const [books, setBooks] = useState<any>([]);
   const [editingBook, setEditingBook] = useState<any | File>(null);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -19,7 +21,7 @@ const Dashboard = () => {
     setShowModal(false);
   }
 
-  // AFTER ONE TIME RELOADING THE DATA, BOOKS WERE NOT ACCESSING THE TOKEN.
+  // AFTER ONE TIME RELOADING THE DATA, BOOKS WERE NOT ACCESSING THE TOKEN CUZ OF CONTEXT.
   useEffect(() => {
     const storedToken = localStorage.getItem('login');
     if (storedToken !== null) {
@@ -32,22 +34,23 @@ const Dashboard = () => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get(
-          'http://assignment.cyberboxer.com/books/list',
+          `http://assignment.cyberboxer.com/books/list/${page}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        // console.log(response.data.data);
+        console.log(response.data.total, 'search length');
         setBooks(response.data.data);
+        setTotalPages(parseInt(response.data.total));
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchBooks();
-  }, [token]);
+  }, [token, books, page]);
   // console.log(books, 'books');
   // console.log(token, 'accessed token');
 
@@ -69,7 +72,7 @@ const Dashboard = () => {
       );
       console.log(response.data.message);
 
-      // GIVEN ID AND BOOK ID IF MATCHED, IT'LL BE SELECTED TO FILTER OUT.//! ie BOOK ID 85 !== 85 IT'S FALSE !!
+      // ie BOOK ID 85 !== 85 IT'S FALSE , so except this every ture values will be there
       const updatedBooks = books.filter((book: any) => book.id !== id);
       setBooks(updatedBooks);
       console.log(updatedBooks, 'ondelete');
@@ -101,15 +104,17 @@ const Dashboard = () => {
         }
       );
       console.log(response.data.message);
-      console.log(response.data);
+      // setBooks(response.data);
+      const imageUrl = response.data.data.image;
+      console.log(imageUrl);
 
       // Update the book data in the state
       const updatedBooks = books.map((b: any) => {
         if (b.id === book.id) {
+          console.log(b, 'b');
           return {
             ...b,
             name: book.name,
-            id: book.id,
             author: book.author,
             image: book.image,
           };
@@ -117,7 +122,6 @@ const Dashboard = () => {
         return b;
       });
       setBooks(updatedBooks);
-      // updateDataSave(updatedBooks);
       console.log(updatedBooks, 'onupdate');
 
       // Clear the editing book state
@@ -133,6 +137,15 @@ const Dashboard = () => {
     document.body.style.overflowY = 'scroll';
   }
 
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+  // TO CONVERT THE LENGTH INTO AN ARRAY FOR PAGINATION WORK
+  const paginationArray = [];
+  for (let i = 1; i <= totalPages - 430; i++) {
+    paginationArray.push(i);
+  }
+
   // LOADING THE CONTENT
   if (!books) {
     return <p>Trying to fetch the data...</p>;
@@ -141,37 +154,56 @@ const Dashboard = () => {
   return (
     <>
       <div className='dashboard'>
-        {books &&
-          books.map((el: any, id: number) => {
-            const { name, image, author } = el;
-            return (
-              <div className='list' key={id}>
-                <div className='title'>
-                  <div className='bookImg'>
-                    <img src={image} alt='' />
+        <div className='items-here'>
+          <div className='pagination'>
+            <div className='page-buttons'>
+              {paginationArray.map((el: any, id: number) => {
+                return (
+                  <button className='p-btn' key={id}>
+                    <div
+                      className='all-btns'
+                      onClick={(e) => handlePageChange(el)}
+                    >
+                      {el}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <div className='current-page'> page-no: {page}</div>
+          </div>
+          {books &&
+            books.map((el: any, id: number) => {
+              const { name, image, author } = el;
+              return (
+                <div className='list' key={id}>
+                  <div className='title'>
+                    <div className='bookImg'>
+                      <img src={image} alt='Book cover' />
+                    </div>
+                    <div className='bookTitle'>
+                      <span>{name}</span>
+                      <span>{author} </span>
+                    </div>
                   </div>
-                  <div className='bookTitle'>
-                    <span>{name}</span>
-                    <span>{author} </span>
+                  <div className='crud_btn'>
+                    <div
+                      className='edit'
+                      onClick={() => {
+                        setEditingBook(el);
+                        handleShowModal();
+                      }}
+                    >
+                      Edit
+                    </div>
+                    <div className='delete' onClick={() => handleDelete(el.id)}>
+                      Delete
+                    </div>
                   </div>
                 </div>
-                <div className='crud_btn'>
-                  <div
-                    className='edit'
-                    onClick={() => {
-                      setEditingBook(el);
-                      handleShowModal();
-                    }}
-                  >
-                    Edit
-                  </div>
-                  <div className='delete' onClick={() => handleDelete(el.id)}>
-                    Delete
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </div>
         {editingBook && showModal && (
           <Modal onClose={handleCloseModal}>
             <div className='getInput'>
@@ -209,8 +241,8 @@ const Dashboard = () => {
                   <div>
                     <label>Image</label>
                     <input
-                      type='text'
-                      value={editingBook.image}
+                      type='file'
+                      value={``}
                       onChange={(e) =>
                         setEditingBook({
                           ...editingBook,

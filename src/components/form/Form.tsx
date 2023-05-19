@@ -47,6 +47,9 @@ const Form = () => {
       console.log(response.data.data);
       saveData(response.data.data);
       setBookId(response.data.data.id);
+
+      localStorage.setItem('bookID', response.data.data.id);
+
       // setBooks((updatedBooks: any) => [...updatedBooks, response.data.data]);
     } catch (error) {
       console.log(error);

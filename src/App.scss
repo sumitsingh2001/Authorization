@@ -68,40 +68,80 @@
 .dashboard {
   width: 100%;
   height: 100%;
+  position: relative;
 
-  .list {
-    height: 60px;
-    border-bottom: 1px solid #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 26px;
+  .items-here {
+    position: relative;
 
-    .title {
-      display: flex;
-      gap: 25px;
+    .pagination {
+      position: sticky;
+      top: 0;
+      background-color: #8686f1;
 
-      .bookImg {
-        width: 50px;
-        height: 50px;
+      .page-buttons {
+        overflow-x: scroll;
+        display: flex;
+        align-items: center;
+        width: 50%;
+        margin-inline: auto;
+        height: 40px;
+        gap: 4px;
 
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        .p-btn {
+          cursor: pointer;
+          border: none;
+          padding: 2px 8px;
+          background-color: #dde2dde2;
+          color: #000;
+          font-variant: small-caps;
         }
       }
-
-      .bookTitle {
-        flex-direction: column;
-        display: flex;
-        align-items: flex-start;
+      .current-page {
+        color: #fff;
+        font-variant: small-caps;
+        text-transform: capitalize;
+        font-weight: bold;
+        font-size: 14px;
+        padding-bottom: 5px;
       }
     }
-    .crud_btn {
+    .list {
+      height: 60px;
+      border-bottom: 1px solid #fff;
       display: flex;
-      gap: 20px;
-      cursor: pointer;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 26px;
+
+      .title {
+        display: flex;
+        gap: 25px;
+
+        .bookImg {
+          width: 50px;
+          height: 50px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .bookTitle {
+          flex-direction: column;
+          display: flex;
+          align-items: flex-start;
+        }
+      }
+      .crud_btn {
+        display: flex;
+        gap: 20px;
+        cursor: pointer;
+      }
     }
   }
 }
