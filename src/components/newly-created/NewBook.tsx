@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import './style.scss';
 import { AuthContext } from '../../context/AuthContext';
-import { BookContext } from '../../context/BookContext';
+// import { BookContext } from '../../context/BookContext';
 import { FaPlus } from 'react-icons/fa';
 
 interface Book {
@@ -14,13 +14,16 @@ interface Book {
 const NewBook = () => {
   const [book, setBook] = useState<Book | null>(null);
   const { token } = useContext(AuthContext);
-  const { bookId } = useContext(BookContext);
+  // const { bookId } = useContext(BookContext);
+
+  const BOOKID = localStorage.getItem('bookID');
+  console.log(BOOKID);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://assignment.cyberboxer.com/books/book/${bookId}`,
+          `http://assignment.cyberboxer.com/books/book/${BOOKID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,12 +38,12 @@ const NewBook = () => {
     };
 
     fetchData();
-  }, [bookId, token]);
+  }, [BOOKID, token]);
 
   return (
     <>
       <div className='listss'>
-        <h6>Find Your created books here</h6>
+        <h6>Get Your last created book here</h6>
         {book && (
           <>
             <div className='lit'>
